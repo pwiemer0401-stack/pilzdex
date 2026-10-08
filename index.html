@@ -20,6 +20,25 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <script>
+    // iOS-Homescreen-App: echte Bildschirmhöhe verwenden (100dvh ist dort zu kurz)
+    (function () {
+      function setH() {
+        var standalone = navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+        var h = window.innerHeight;
+        if (standalone && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+          var land = matchMedia("(orientation: landscape)").matches;
+          var full = land ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
+          h = Math.max(h, full);
+        }
+        document.documentElement.style.setProperty("--app-h", h + "px");
+      }
+      setH();
+      window.addEventListener("resize", setH);
+      window.addEventListener("orientationchange", function () { setTimeout(setH, 300); });
+      window.addEventListener("pageshow", setH);
+    })();
+  </script>
   <div id="app">
     <header class="topbar">
       <a href="#/dex" class="brand" aria-label="Pilzdex Startseite">
