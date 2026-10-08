@@ -21,17 +21,23 @@
 </head>
 <body>
   <script>
-    // iOS-Homescreen-App: echte Bildschirmhöhe verwenden (100dvh ist dort zu kurz)
+    // App-Höhe = sichtbare Fläche (inkl. Korrektur für iOS-Homescreen-Apps)
     (function () {
       function setH() {
-        var standalone = navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+        var root = document.documentElement;
         var h = window.innerHeight;
+        root.style.setProperty("--app-h", h + "px");
+        // iOS-Bug: Die Homescreen-App bekommt eine zu kurze Fläche, darunter bleibt ein Streifen.
+        // Der Streifen hat die Farbe der Leiste; der Abstand für den Home-Balken entfällt dann.
+        var standalone = navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+        var gap = 0;
         if (standalone && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
           var land = matchMedia("(orientation: landscape)").matches;
           var full = land ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
-          h = Math.max(h, full);
+          gap = full - h;
         }
-        document.documentElement.style.setProperty("--app-h", h + "px");
+        if (gap > 20) root.style.setProperty("--tab-pad", "0px");
+        else root.style.removeProperty("--tab-pad");
       }
       setH();
       window.addEventListener("resize", setH);

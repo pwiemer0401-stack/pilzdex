@@ -44,8 +44,8 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; overscroll-behavior: none; }
-/* App-Shell: Kopf, scrollender Inhalt, Leiste. Die Höhe setzt app.js/index.html (--app-h),
-   weil iOS als Homescreen-App 100dvh um die Statusleiste zu kurz berechnet. */
+html { background: var(--surface); }
+/* App-Shell: Kopf, scrollender Inhalt, Leiste. Höhe = sichtbare Fläche (--app-h aus index.html). */
 #app { position: fixed; top: 0; left: 0; right: 0; height: 100vh; height: var(--app-h, 100dvh); display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
 body {
   background: var(--surface);
@@ -88,8 +88,8 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: bal
 /* ── Tabbar ── */
 .tabbar {
   flex: none; position: relative; z-index: 1000;
-  height: calc(var(--tabbar-h) + var(--safe-bottom));
-  padding-bottom: var(--safe-bottom);
+  height: calc(var(--tabbar-h) + var(--tab-pad, var(--safe-bottom)));
+  padding-bottom: var(--tab-pad, var(--safe-bottom));
   display: grid; grid-template-columns: repeat(5, 1fr);
   background: var(--surface); border-top: 1px solid var(--line);
 }
