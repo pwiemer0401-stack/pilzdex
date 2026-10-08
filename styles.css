@@ -45,9 +45,10 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; }
+html, body { margin: 0; overscroll-behavior: none; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 /* Seite scrollt normal; Kopf oben und Leiste unten kleben per sticky (wie in der Einkaufs-App). */
-#app { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+#app { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; overflow-x: clip; max-width: 100vw; }
 body {
   background: var(--bg);
   color: var(--ink);
@@ -118,10 +119,14 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: bal
 .field { display: grid; gap: 6px; }
 .field > span, .label { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
 .input, select.input, textarea.input {
-  width: 100%; min-height: 46px; padding: 10px 12px; border-radius: 8px;
+  display: block; width: 100%; max-width: 100%; min-width: 0; min-height: 46px; padding: 10px 12px; border-radius: 8px;
   border: 1.5px solid var(--line); background: var(--surface);
 }
 textarea.input { min-height: 84px; resize: vertical; }
+/* iOS gibt Datums-Feldern sonst eine eigene, breitere Mindestbreite */
+input[type="datetime-local"].input, input[type="date"].input { -webkit-appearance: none; appearance: none; text-align: left; line-height: 24px; }
+input[type="datetime-local"]::-webkit-date-and-time-value { text-align: left; }
+.form, .field, .form > * { min-width: 0; }
 .input:focus { border-color: var(--accent); outline: none; }
 
 /* ── Dex-Kopf ── */
