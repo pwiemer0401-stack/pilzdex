@@ -335,6 +335,7 @@
       case "fund": setTab("funde"); return renderFind(arg);
       case "neu": setTab("neu"); return renderNew(arg);
       case "konto": setTab("konto"); return renderAccount();
+      case "debug": setTab(""); return renderDebug();
       default: setTab("dex"); return renderDex();
     }
   }
@@ -763,6 +764,31 @@
     if (lo) lo.onclick = async () => { await api.signOut(); state.me = null; location.hash = "#/dex"; route(); };
     const rs = $("#b-reset");
     if (rs) rs.onclick = async () => { if (!confirm("Alle Demo-Funde löschen?")) return; try { localStorage.removeItem("pilzdex-demo"); } catch (e) {} await reload(); toast("Demo-Daten gelöscht"); location.hash = "#/dex"; };
+  }
+
+  // Diagnose-Seite (#/debug): zeigt, welche Maße das Handy meldet
+  function renderDebug() {
+    const probe = document.createElement("div");
+    probe.style.cssText = "position:fixed;top:0;left:0;width:0;height:100dvh;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);visibility:hidden";
+    document.body.appendChild(probe);
+    const cs = getComputedStyle(probe);
+    const vals = {
+      "Homescreen-App": String(!!(navigator.standalone || matchMedia("(display-mode: standalone)").matches)),
+      "innerHeight": window.innerHeight,
+      "visualViewport": window.visualViewport ? Math.round(visualViewport.height) : "–",
+      "100dvh": Math.round(parseFloat(cs.height)),
+      "screen.height": screen.height,
+      "safe-area oben": cs.paddingTop,
+      "safe-area unten": cs.paddingBottom,
+      "--app-h": getComputedStyle(document.documentElement).getPropertyValue("--app-h") || "–",
+      "--tab-pad": getComputedStyle(document.documentElement).getPropertyValue("--tab-pad") || "–",
+      "App-Unterkante": Math.round(document.getElementById("app").getBoundingClientRect().bottom),
+      "Leisten-Unterkante": Math.round(document.querySelector(".tabbar").getBoundingClientRect().bottom),
+      "Gerät": navigator.userAgent.replace(/^Mozilla\/5.0 /, ""),
+    };
+    probe.remove();
+    view.innerHTML = `<div class="form"><h1>Diagnose</h1><p class="hint">Bitte einen Screenshot dieser Seite schicken.</p>
+      <dl class="sp-facts">${Object.entries(vals).map(([k, v]) => `<dt>${esc(k)}</dt><dd class="num" style="overflow-wrap:anywhere">${esc(v)}</dd>`).join("")}</dl></div>`;
   }
 
   function renderAuth() {
