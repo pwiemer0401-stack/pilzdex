@@ -9,7 +9,7 @@
 // alles wird nur lokal in diesem Browser gespeichert.
 
 window.PILZDEX_CONFIG = {
-  SUPABASE_URL: "https://mrmzrqdlgsesnqjzhhif.supabase.co/rest/v1/",
+  SUPABASE_URL: "https://mrmzrqdlgsesnqjzhhif.supabase.co",
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ybXpycWRsZ3Nlc25xanpoaGlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0NjMzMzMsImV4cCI6MjEwNzAzOTMzM30.aV6bmcA67_sPcXxls0090RE6iGQGoLGv0RwHty6a1CU",
   PHOTO_BUCKET: "fotos",
 };
