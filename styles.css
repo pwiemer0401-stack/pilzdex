@@ -1,16 +1,18 @@
 /* Layout: Feldbestimmungsbuch trifft Handheld-Gerät. Raster aus Sammelkästen, Infoseiten als Steckbrief, Tabbar unten. */
 :root {
-  --bg: #ECEFE6;          /* Flechtengrau */
-  --surface: #F9FAF6;
-  --slot: #DFE4D6;        /* leerer Kasten */
-  --ink: #1C251E;
-  --muted: #5B675D;
-  --line: #C9D0C1;
-  --accent: #C23B2E;      /* Fliegenpilzrot */
+  --bg: #EDF2EA;          /* helles Farngrün */
+  --surface: #F8FBF6;
+  --slot: #DCE6D4;        /* leerer Kasten */
+  --ink: #1D2B22;
+  --muted: #56695B;
+  --line: #C3D2BC;
+  --accent: #4A7C55;      /* Waldgrün */
   --accent-ink: #FFFFFF;
-  --moss: #3B6A3C;
+  --moss: #86B26F;        /* Moos, für den Fortschrittsbalken */
+  --bar: #4A7C55;         /* Kopfzeile */
+  --bar-ink: #FFFFFF;
 
-  --e-essbar: #2E7A3A;
+  --e-essbar: #23843B;
   --e-gegart: #7E6F12;
   --e-ungeniessbar: #67635B;
   --e-giftig: #B9531A;
@@ -29,15 +31,15 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #111612; --surface: #19201B; --slot: #1E2620; --ink: #E3E9DF; --muted: #98A395;
-    --line: #2B352D; --accent: #E0584A; --accent-ink: #160C0A; --moss: #7DB07A;
+    --bg: #141E18; --surface: #1B2920; --slot: #213226; --ink: #E2ECE0; --muted: #9AB09E;
+    --line: #2D4134; --accent: #7DB487; --accent-ink: #0F1A13; --moss: #9CCB86; --bar: #355C40; --bar-ink: #EAF3E7;
     --e-essbar: #6CC27A; --e-gegart: #D2BC4E; --e-ungeniessbar: #A9A49A; --e-giftig: #F08A4F; --e-toedlich: #F2697B;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #111612; --surface: #19201B; --slot: #1E2620; --ink: #E3E9DF; --muted: #98A395;
-  --line: #2B352D; --accent: #E0584A; --accent-ink: #160C0A; --moss: #7DB07A;
+  --bg: #141E18; --surface: #1B2920; --slot: #213226; --ink: #E2ECE0; --muted: #9AB09E;
+  --line: #2D4134; --accent: #7DB487; --accent-ink: #0F1A13; --moss: #9CCB86; --bar: #355C40; --bar-ink: #EAF3E7;
   --e-essbar: #6CC27A; --e-gegart: #D2BC4E; --e-ungeniessbar: #A9A49A; --e-giftig: #F08A4F; --e-toedlich: #F2697B;
   color-scheme: dark;
 }
@@ -68,13 +70,13 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: bal
   height: calc(var(--topbar-h) + var(--safe-top));
   padding: var(--safe-top) 16px 0;
   display: flex; align-items: center; justify-content: space-between;
-  background: var(--accent); color: var(--accent-ink);
+  background: var(--bar); color: var(--bar-ink);
 }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .brand-lens {
   width: 26px; height: 26px; border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #fff 0 18%, #9fd3ff 19% 45%, #2f7fc4 46% 100%);
-  box-shadow: 0 0 0 3px var(--accent-ink);
+  box-shadow: 0 0 0 3px var(--bar-ink);
 }
 .brand-name { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; letter-spacing: -.01em; }
 .topbar-right { display: flex; align-items: center; gap: 8px; }
@@ -297,7 +299,7 @@ textarea.input { min-height: 84px; resize: vertical; }
 .popup { display: grid; gap: 6px; width: 180px; }
 .popup img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; }
 .popup b { font-family: var(--font-display); font-size: 1rem; }
-.popup a { color: #C23B2E; font-weight: 700; }
+.popup a { color: #3E6B48; font-weight: 700; }
 .leaflet-container { background: var(--slot); font-family: var(--font-body); }
 .me-dot { width: 16px; height: 16px; border-radius: 50%; background: #2f7fc4; border: 3px solid #fff; box-shadow: 0 0 0 6px rgb(47 127 196 / .25); }
 

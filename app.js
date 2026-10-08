@@ -586,7 +586,7 @@
       const m = L.map("minimap", { zoomControl: true, attributionControl: true }).setView([f.lat, f.lng], 16);
       addBaseLayers(m);
       L.marker([f.lat, f.lng], { icon: L.divIcon({ className: "", html: `<div class="pin"><img src="${esc(thumbUrl(f))}" alt=""></div>`, iconSize: [44, 44], iconAnchor: [22, 22] }) }).addTo(m);
-      if (f.accuracy_m) L.circle([f.lat, f.lng], { radius: f.accuracy_m, color: "#C23B2E", weight: 1, fillOpacity: 0.08 }).addTo(m);
+      if (f.accuracy_m) L.circle([f.lat, f.lng], { radius: f.accuracy_m, color: "#4A7C55", weight: 1, fillOpacity: 0.08 }).addTo(m);
       cleanup.push(() => m.remove());
     }
 
@@ -694,7 +694,7 @@
         marker.on("dragend", () => { const p = marker.getLatLng(); setLoc(p.lat, p.lng, null, "Pin verschoben"); });
       } else marker.setLatLng([lat, lng]);
       if (accCircle) { accCircle.remove(); accCircle = null; }
-      if (acc) accCircle = L.circle([lat, lng], { radius: acc, color: "#C23B2E", weight: 1, fillOpacity: 0.08 }).addTo(map);
+      if (acc) accCircle = L.circle([lat, lng], { radius: acc, color: "#4A7C55", weight: 1, fillOpacity: 0.08 }).addTo(map);
       $("#loc-text").textContent = `${label} · ${lat.toFixed(5)}, ${lng.toFixed(5)}${acc ? ` (±${Math.round(acc)} m)` : ""}`;
     };
     map.on("click", (e) => setLoc(e.latlng.lat, e.latlng.lng, null, "Auf Karte gesetzt"));

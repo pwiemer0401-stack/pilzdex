@@ -5,8 +5,8 @@
   "start_url": "./#/dex",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#ECEFE6",
-  "theme_color": "#C23B2E",
+  "background_color": "#EDF2EA",
+  "theme_color": "#4A7C55",
   "lang": "de",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
