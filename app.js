@@ -224,13 +224,21 @@
 
   // ───────────────────────── Daten: Supabase ─────────────────────────
   function supaApi() {
-    const sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+    // URL säubern: nur "https://<ref>.supabase.co" ohne Pfad wie /rest/v1/ oder Dashboard-Link
+    let url = String(CFG.SUPABASE_URL).trim();
+    const dash = url.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);
+    url = dash ? `https://${dash[1]}.supabase.co` : new URL(url).origin;
+    const sb = window.supabase.createClient(url, String(CFG.SUPABASE_ANON_KEY).trim());
     const bucket = CFG.PHOTO_BUCKET || "fotos";
     const must = (r) => { if (r.error) throw r.error; return r.data; };
     return {
       async currentUser() { const { data } = await sb.auth.getSession(); return data.session ? data.session.user : null; },
       async signIn(email, password) { return must(await sb.auth.signInWithPassword({ email, password })).user; },
-      async signUp(email, password) { const d = must(await sb.auth.signUp({ email, password })); return d.session ? d.user : null; },
+      async signUp(email, password) {
+        const back = location.origin + location.pathname; // Bestätigungslink führt zurück zur App
+        const d = must(await sb.auth.signUp({ email, password, options: { emailRedirectTo: back } }));
+        return d.session ? d.user : null;
+      },
       async signOut() { await sb.auth.signOut(); },
       onSignOut(cb) { sb.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_OUT") cb(); }); },
       async load() {
