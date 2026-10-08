@@ -154,6 +154,17 @@
     const f = state.finds.find((x) => x.lat != null);
     return f ? [f.lat, f.lng] : null;
   }
+  // Zuletzt bekannter eigener Standort (damit die Karte sofort in der Nähe startet)
+  function savedPos() {
+    try { const p = JSON.parse(localStorage.getItem("pilzdex-pos")); return Array.isArray(p) ? p : null; } catch (e) { return null; }
+  }
+  function showMe(map, c) {
+    const ll = [c.latitude, c.longitude];
+    try { localStorage.setItem("pilzdex-pos", JSON.stringify(ll)); } catch (e) {}
+    if (map._meMarker) map._meMarker.setLatLng(ll);
+    else map._meMarker = L.marker(ll, { icon: L.divIcon({ className: "", html: '<div class="me-dot"></div>', iconSize: [16, 16], iconAnchor: [8, 8] }), interactive: false, zIndexOffset: -100 }).addTo(map);
+    return ll;
+  }
   function locateMe(onPos, onErr) {
     if (!navigator.geolocation) { onErr && onErr("Dein Browser kann keinen Standort bestimmen."); return; }
     navigator.geolocation.getCurrentPosition(
@@ -171,12 +182,7 @@
       b.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>';
       L.DomEvent.on(b, "click", (e) => {
         L.DomEvent.preventDefault(e); L.DomEvent.stopPropagation(e);
-        locateMe((c) => {
-          const ll = [c.latitude, c.longitude];
-          if (map._meMarker) map._meMarker.setLatLng(ll);
-          else map._meMarker = L.marker(ll, { icon: L.divIcon({ className: "", html: '<div class="me-dot"></div>', iconSize: [16, 16], iconAnchor: [8, 8] }), interactive: false }).addTo(map);
-          map.setView(ll, Math.max(map.getZoom(), 15));
-        }, toast);
+        locateMe((c) => { const ll = showMe(map, c); map.setView(ll, Math.max(map.getZoom(), 15)); }, toast);
       });
       return b;
     },
@@ -189,9 +195,17 @@
     addBaseLayers(bigMap);
     new LocateControl().addTo(bigMap);
     bigLayer = L.layerGroup().addTo(bigMap);
-    bigMap.setView(DEFAULT_VIEW.center, DEFAULT_VIEW.zoom);
+    // Start: zuletzt bekannter Standort, sonst letzter Fund, sonst Deutschland
+    const start = savedPos() || lastLocation();
+    bigMap.setView(start || DEFAULT_VIEW.center, start ? 14 : DEFAULT_VIEW.zoom);
     $("#map-filter").addEventListener("change", (e) => { state.mapFilter = e.target.value; bigFitted = false; drawBigMap(); });
+    // Beim ersten Öffnen direkt auf den aktuellen Standort springen
+    locateMe(
+      (c) => { const ll = showMe(bigMap, c); if (state.mapFilter === "alle") bigMap.setView(ll, 15, { animate: false }); },
+      () => { if (!start) { bigFitted = false; fitAllFinds = true; drawBigMap(); } }
+    );
   }
+  let fitAllFinds = false; // nur wenn kein Standort verfügbar ist
   function drawBigMap() {
     if (!bigMap) return;
     const located = state.finds.filter((f) => f.lat != null && f.lng != null);
@@ -215,7 +229,7 @@
       const html = `<div class="popup"><img src="${esc(thumbUrl(f))}" alt=""><b>${sp ? esc(sp.name) : "Unbestimmt"}</b><span>${esc(nameFor(f.finder_email))} · ${fmtDate(f.found_at)}</span><a href="#/fund/${f.id}">Fund ansehen</a></div>`;
       L.marker([f.lat, f.lng], { icon }).bindPopup(html).addTo(bigLayer);
     });
-    if (!bigFitted && shown.length) {
+    if (!bigFitted && shown.length && (state.mapFilter !== "alle" || fitAllFinds)) {
       const b = L.latLngBounds(shown.map((f) => [f.lat, f.lng]));
       bigMap.fitBounds(b.pad(0.25), { maxZoom: 15 });
       bigFitted = true;
@@ -669,7 +683,7 @@
     speciesCombo($("#new-combo"), preset, (v) => { st.species = v; });
 
     // Karte zum Setzen des Ortes
-    const start = lastLocation();
+    const start = savedPos() || lastLocation();
     const map = L.map("pickmap").setView(start || DEFAULT_VIEW.center, start ? 14 : DEFAULT_VIEW.zoom);
     addBaseLayers(map);
     let marker = null, accCircle = null;
@@ -689,7 +703,7 @@
 
     const locate = () => {
       $("#loc-text").textContent = "Standort wird gesucht…";
-      locateMe((c) => { if (!alive) return; setLoc(c.latitude, c.longitude, c.accuracy, "Dein Standort"); map.setView([c.latitude, c.longitude], 17, { animate: false }); },
+      locateMe((c) => { if (!alive) return; try { localStorage.setItem("pilzdex-pos", JSON.stringify([c.latitude, c.longitude])); } catch (e) {} setLoc(c.latitude, c.longitude, c.accuracy, "Dein Standort"); map.setView([c.latitude, c.longitude], 17, { animate: false }); },
         (msg) => { if (alive) $("#loc-text").textContent = msg + " Tippe stattdessen auf die Karte."; });
     };
     $("#b-locate").onclick = locate;
