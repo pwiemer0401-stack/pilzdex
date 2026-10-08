@@ -319,7 +319,7 @@
   function route() {
     const hash = location.hash || "#/dex";
     const [, page, arg] = hash.split("/");
-    if (currentPage === "dex") state.dexScroll = view.scrollTop;
+    if (currentPage === "dex") state.dexScroll = window.scrollY;
     runCleanup();
     $("#map-view").hidden = page !== "karte";
     view.hidden = page === "karte";
@@ -343,9 +343,9 @@
   function rerender() {
     if (currentPage === "neu") return; // Formular nicht verwerfen
     if (currentPage === "karte") return drawBigMap();
-    const y = view.scrollTop;
+    const y = window.scrollY;
     route();
-    view.scrollTop = y;
+    window.scrollTo(0, y);
   }
 
   // ───────────────────────── Dex ─────────────────────────
@@ -381,7 +381,7 @@
       drawDexGrid();
     }));
     drawDexGrid();
-    requestAnimationFrame(() => { view.scrollTop = state.dexScroll || 0; });
+    requestAnimationFrame(() => window.scrollTo(0, state.dexScroll || 0));
   }
 
   function drawDexGrid() {
@@ -475,7 +475,7 @@
 
     const mapBtn = view.querySelector("[data-mapfilter]");
     if (mapBtn) mapBtn.addEventListener("click", () => { state.mapFilter = mapBtn.dataset.mapfilter; bigFitted = false; });
-    view.scrollTop = 0;
+    window.scrollTo(0, 0);
   }
 
   function lookalikeHtml(d) {
@@ -607,7 +607,7 @@
         else { toast("Gespeichert"); rerender(); }
       } catch (err) { toast(errText(err)); btn.disabled = false; }
     };
-    view.scrollTop = 0;
+    window.scrollTo(0, 0);
   }
 
   // Suchbare Artauswahl (inkl. "Noch unbestimmt")
@@ -743,7 +743,7 @@
         btn.disabled = false; btn.textContent = "Fund speichern";
       }
     });
-    view.scrollTop = 0;
+    window.scrollTo(0, 0);
   }
 
   // ───────────────────────── Konto / Login ─────────────────────────
