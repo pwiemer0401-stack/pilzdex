@@ -319,7 +319,7 @@
   function route() {
     const hash = location.hash || "#/dex";
     const [, page, arg] = hash.split("/");
-    if (currentPage === "dex") state.dexScroll = window.scrollY;
+    if (currentPage === "dex") state.dexScroll = view.scrollTop;
     runCleanup();
     $("#map-view").hidden = page !== "karte";
     view.hidden = page === "karte";
@@ -334,7 +334,7 @@
       case "funde": setTab("funde"); return renderFeed();
       case "fund": setTab("funde"); return renderFind(arg);
       case "neu": setTab("neu"); return renderNew(arg);
-      case "konto": setTab(""); return renderAccount();
+      case "konto": setTab("konto"); return renderAccount();
       default: setTab("dex"); return renderDex();
     }
   }
@@ -342,9 +342,9 @@
   function rerender() {
     if (currentPage === "neu") return; // Formular nicht verwerfen
     if (currentPage === "karte") return drawBigMap();
-    const y = window.scrollY;
+    const y = view.scrollTop;
     route();
-    window.scrollTo(0, y);
+    view.scrollTop = y;
   }
 
   // ───────────────────────── Dex ─────────────────────────
@@ -380,7 +380,7 @@
       drawDexGrid();
     }));
     drawDexGrid();
-    requestAnimationFrame(() => window.scrollTo(0, state.dexScroll || 0));
+    requestAnimationFrame(() => { view.scrollTop = state.dexScroll || 0; });
   }
 
   function drawDexGrid() {
@@ -474,7 +474,7 @@
 
     const mapBtn = view.querySelector("[data-mapfilter]");
     if (mapBtn) mapBtn.addEventListener("click", () => { state.mapFilter = mapBtn.dataset.mapfilter; bigFitted = false; });
-    window.scrollTo(0, 0);
+    view.scrollTop = 0;
   }
 
   function lookalikeHtml(d) {
@@ -606,7 +606,7 @@
         else { toast("Gespeichert"); rerender(); }
       } catch (err) { toast(errText(err)); btn.disabled = false; }
     };
-    window.scrollTo(0, 0);
+    view.scrollTop = 0;
   }
 
   // Suchbare Artauswahl (inkl. "Noch unbestimmt")
@@ -742,7 +742,7 @@
         btn.disabled = false; btn.textContent = "Fund speichern";
       }
     });
-    window.scrollTo(0, 0);
+    view.scrollTop = 0;
   }
 
   // ───────────────────────── Konto / Login ─────────────────────────
@@ -750,7 +750,7 @@
     const crew = Object.entries(state.crew);
     view.innerHTML = `
       <div class="form">
-        <h1>Konto</h1>
+        <h1>Profil</h1>
         <dl class="sp-facts"><dt>Name</dt><dd>${esc(nameFor(state.me.email))}</dd><dt>E-Mail</dt><dd>${esc(state.me.email)}</dd><dt>Funde</dt><dd>${state.finds.filter(isMine).length}</dd></dl>
         <section><h2 style="font-size:1.1rem;margin-bottom:8px">Crew</h2>
           <div class="feed">${crew.map(([email, name]) => `<div class="feed-item" style="grid-template-columns:1fr"><div class="feed-body"><div class="feed-title">${esc(name)}</div><div class="feed-meta">${state.finds.filter((f) => (f.finder_email || "").toLowerCase() === email).length} Funde · ${new Set(state.finds.filter((f) => (f.finder_email || "").toLowerCase() === email && BY_ID[f.species_id]).map((f) => f.species_id)).size} Arten</div></div></div>`).join("")}</div>
@@ -767,6 +767,7 @@
 
   function renderAuth() {
     setTab("");
+    $(".tabbar").hidden = true;
     $("#map-view").hidden = true; view.hidden = false;
     let mode = "login";
     const draw = (err = "") => {
@@ -821,7 +822,7 @@
   // ───────────────────────── Start ─────────────────────────
   async function startSession(u) {
     state.me = { id: u.id, email: u.email, name: u.name };
-    $("#btn-account").hidden = false;
+    $(".tabbar").hidden = false;
     view.innerHTML = `<p class="empty">Pilzdex wird geladen…</p>`;
     try { await reload(); }
     catch (e) { view.innerHTML = `<p class="empty">Laden fehlgeschlagen: ${esc(errText(e))}</p>`; return; }
@@ -832,7 +833,6 @@
 
   async function init() {
     $("#demo-badge").hidden = !DEMO;
-    $("#btn-account").onclick = () => { location.hash = "#/konto"; };
     window.addEventListener("hashchange", route);
     api.onSignOut(() => { state.me = null; route(); });
     document.addEventListener("visibilitychange", async () => {

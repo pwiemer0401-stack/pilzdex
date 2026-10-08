@@ -43,7 +43,9 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; }
+html, body { margin: 0; height: 100%; }
+/* App-Shell: Kopf, scrollender Inhalt, Leiste. Kein position:fixed, damit iOS die Leiste nicht verschiebt. */
+#app { height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 body {
   background: var(--bg);
   color: var(--ink);
@@ -62,7 +64,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: bal
 
 /* ── Topbar ── */
 .topbar {
-  position: sticky; top: 0; z-index: 1000;
+  flex: none; position: relative; z-index: 1000;
   height: calc(var(--topbar-h) + var(--safe-top));
   padding: var(--safe-top) 16px 0;
   display: flex; align-items: center; justify-content: space-between;
@@ -80,21 +82,21 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: bal
 .icon-btn { background: none; border: 0; padding: 6px; border-radius: 8px; cursor: pointer; color: inherit; display: grid; place-items: center; }
 
 /* ── Main ── */
-#view { display: block; max-width: 980px; margin: 0 auto; padding: 16px 16px calc(var(--tabbar-h) + var(--safe-bottom) + 32px); outline: none; }
+#view { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; outline: none; padding-block: 16px 40px; padding-inline: max(16px, calc((100% - 948px) / 2)); }
 
 /* ── Tabbar ── */
 .tabbar {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 1000;
+  flex: none; position: relative; z-index: 1000;
   height: calc(var(--tabbar-h) + var(--safe-bottom));
   padding-bottom: var(--safe-bottom);
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(5, 1fr);
   background: var(--surface); border-top: 1px solid var(--line);
 }
 .tabbar a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: var(--muted); font-size: .75rem; font-weight: 700; }
-.tabbar svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tabbar svg { width: 24px; height: 24px; margin: 3px 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .tabbar a.active { color: var(--accent); }
-.tab-add-btn { width: 40px; height: 32px; border-radius: 10px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; }
-.tab-add-btn svg { stroke-width: 2.6; }
+.tab-add-btn { width: 44px; height: 30px; border-radius: 10px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; }
+.tab-add-btn svg { stroke-width: 2.6; margin: 0; width: 22px; height: 22px; }
 .tabbar a.tab-add { color: var(--ink); }
 
 /* ── Buttons, Inputs ── */
@@ -282,12 +284,7 @@ textarea.input { min-height: 84px; resize: vertical; }
 .chosen { display: flex; gap: 10px; align-items: center; justify-content: space-between; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--surface); }
 
 /* ── Karte ── */
-#map-view {
-  position: fixed; left: 0; right: 0; z-index: 1;
-  top: calc(var(--topbar-h) + var(--safe-top));
-  bottom: calc(var(--tabbar-h) + var(--safe-bottom));
-  display: flex; flex-direction: column;
-}
+#map-view { flex: 1; min-height: 0; position: relative; z-index: 1; display: flex; flex-direction: column; }
 .map-toolbar { display: flex; gap: 10px; align-items: center; padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
 .map-toolbar select { flex: 1; min-width: 0; max-width: 360px; min-height: 40px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--bg); padding: 0 10px; }
 .map-count { font-size: .85rem; color: var(--muted); white-space: nowrap; }
