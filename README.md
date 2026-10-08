@@ -30,14 +30,15 @@ Ohne eingetragene Supabase-Daten läuft die App im **Demo-Modus**: Alles bleibt 
 ### 1. Supabase-Projekt
 1. Auf [supabase.com](https://supabase.com) kostenlos anmelden → **New project** (Region: Frankfurt).
 2. **SQL Editor → New query**, den Inhalt von `supabase-setup.sql` einfügen und **Run** klicken.
-3. Ganz unten im Skript die Crew eintragen und noch einmal ausführen:
+3. Crew eintragen, entweder im **Table Editor → crew** per Klick oder per SQL.
+   Die Adressen unten sind nur Platzhalter, ersetzt sie durch eure echten E-Mails:
    ```sql
    insert into public.crew (email, name) values
-     ('paul@example.com', 'Paul'),
-     ('max@example.com',  'Max');
+     ('deine@mail.de', 'Paul');
    ```
-   Später kommen neue Freunde mit derselben Zeile dazu.
-4. **Authentication → Sign In / Providers → Email**: „Confirm email“ ausschalten. Dann kann sich jeder sofort registrieren, ohne Bestätigungsmail. Lasst ihr es an, kommt eine Mail mit Link.
+   Die E-Mail muss genau die sein, mit der sich die Person in der App registriert.
+4. **Authentication → Sign In / Providers → Email**: „Confirm email“ ausschalten. Dann kann sich jeder sofort registrieren, und es gibt keine Probleme mit dem Mail-Limit des kostenlosen Tarifs.
+   Wollt ihr die Bestätigung behalten: unter **Authentication → URL Configuration** die Adresse eurer App als *Site URL* und *Redirect URL* eintragen, sonst führt der Link ins Leere (localhost).
 5. **Project Settings → API**: „Project URL“ und den Key „anon public“ kopieren.
 
 ### 2. Code anpassen
